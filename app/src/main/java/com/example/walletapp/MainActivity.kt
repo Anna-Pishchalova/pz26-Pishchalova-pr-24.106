@@ -1,4 +1,4 @@
-// MainActivity.kt (обновленная версия с TrackScreen)
+// MainActivity.kt (обновленная версия)
 package com.example.walletapp
 
 import android.os.Bundle
@@ -68,6 +68,23 @@ fun WalletApp() {
                 onProfileClick = { currentScreen = "Profile" }
             )
         }
+        "SendPackage" -> {
+            SendPackageScreen(
+                onBackClick = { currentScreen = "Wallet" },
+                onReportClick = {
+                    println("Пожаловаться на посылку")
+                    // Здесь можно показать диалог или перейти на экран жалобы
+                },
+                onSuccessfulClick = {
+                    println("Посылка успешно доставлена")
+                    // Здесь можно перейти на экран успешной доставки
+                },
+                onHomeClick = { currentScreen = "Home" },
+                onWalletClick = { currentScreen = "Wallet" },
+                onTrackClick = { currentScreen = "Track" },
+                onProfileClick = { currentScreen = "Profile" }
+            )
+        }
         else -> {
             // Основной экран кошелька
             WalletScreen(
@@ -76,7 +93,7 @@ fun WalletApp() {
                 onTrackClick = { currentScreen = "Track" },
                 onProfileClick = { currentScreen = "Profile" },
                 onTopUpClick = { currentScreen = "PaymentMethod" },
-                onBankClick = { /* Переход на банк */ },
+                onBankClick = { currentScreen = "SendPackage" }, // ← Переход на отправку
                 onTransferClick = { /* Переход на перевод */ },
                 onCardClick = { /* Переход на карту */ },
                 onTransactionClick = { transaction ->
@@ -87,7 +104,7 @@ fun WalletApp() {
     }
 
     // Показываем нижнюю навигацию только если не на экране оплаты
-    if (currentScreen != "PaymentMethod") {
+    if (currentScreen != "PaymentMethod" && currentScreen != "SendPackage") {
         BottomNavigationBar(
             selectedItem = currentScreen,
             onItemClick = {
