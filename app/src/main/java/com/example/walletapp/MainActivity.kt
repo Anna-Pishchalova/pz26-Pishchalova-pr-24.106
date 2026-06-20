@@ -1,4 +1,4 @@
-// MainActivity.kt
+// MainActivity.kt (обновленная версия)
 package com.example.walletapp
 
 import android.os.Bundle
@@ -39,37 +39,49 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun WalletApp() {
     // Текущий выбранный экран
-    var selectedScreen by remember { mutableStateOf("Wallet") }
+    var currentScreen by remember { mutableStateOf("Wallet") }
+    // Сохраняем выбранный метод оплаты
+    var selectedPaymentMethod by remember { mutableStateOf<String?>(null) }
 
-    // Экран кошелька
-    if (selectedScreen == "Wallet") {
-        WalletScreen(
-            onHomeClick = { selectedScreen = "Home" },
-            onWalletClick = { selectedScreen = "Wallet" },
-            onTrackClick = { selectedScreen = "Track" },
-            onProfileClick = { selectedScreen = "Profile" },
-            onTopUpClick = { /* Переход на пополнение */ },
-            onBankClick = { /* Переход на банк */ },
-            onTransferClick = { /* Переход на перевод */ },
-            onCardClick = { /* Переход на карту */ },
-            onTransactionClick = { transaction ->
-                // Переход к деталям транзакции
-                println("Выбрана транзакция: ${transaction.description}")
-            }
-        )
-    } else {
-        // Заглушки для других экранов
-        PlaceholderScreen(
-            title = selectedScreen,
-            onBackClick = { selectedScreen = "Wallet" }
-        )
+    // Отображаем нужный экран
+    when (currentScreen) {
+        "PaymentMethod" -> {
+            PaymentMethodScreen(
+                onBackClick = { currentScreen = "Wallet" },
+                onProceedClick = { method ->
+                    selectedPaymentMethod = method
+                    // Здесь можно перейти на экран успешной оплаты или показать сообщение
+                    println("Выбран способ оплаты: $method")
+                    // Возвращаемся в кошелек
+                    currentScreen = "Wallet"
+                }
+            )
+        }
+        else -> {
+            // Основной экран кошелька
+            WalletScreen(
+                onHomeClick = { currentScreen = "Home" },
+                onWalletClick = { currentScreen = "Wallet" },
+                onTrackClick = { currentScreen = "Track" },
+                onProfileClick = { currentScreen = "Profile" },
+                onTopUpClick = { currentScreen = "PaymentMethod" }, // ← Переход на выбор оплаты
+                onBankClick = { /* Переход на банк */ },
+                onTransferClick = { /* Переход на перевод */ },
+                onCardClick = { /* Переход на карту */ },
+                onTransactionClick = { transaction ->
+                    println("Выбрана транзакция: ${transaction.description}")
+                }
+            )
+        }
     }
 
-    // Нижняя навигация (отображается всегда)
-    BottomNavigationBar(
-        selectedItem = selectedScreen,
-        onItemClick = { selectedScreen = it }
-    )
+    // Показываем нижнюю навигацию только если не на экране оплаты
+    if (currentScreen != "PaymentMethod") {
+        BottomNavigationBar(
+            selectedItem = currentScreen,
+            onItemClick = { currentScreen = it }
+        )
+    }
 }
 
 // ===== Компонент: Заглушка для экранов =====
