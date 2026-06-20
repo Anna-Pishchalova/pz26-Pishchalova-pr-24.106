@@ -51,7 +51,7 @@ fun WalletApp() {
                 onProceedClick = { method ->
                     selectedPaymentMethod = method
                     println("Выбран способ оплаты: $method")
-                    currentScreen = "Wallet"
+                    currentScreen = "DeliverySuccess"
                 }
             )
         }
@@ -59,7 +59,6 @@ fun WalletApp() {
             TrackScreen(
                 onBackClick = { currentScreen = "Wallet" },
                 onViewPackageInfo = {
-                    // Переход к информации о посылке
                     println("Просмотр информации о посылке")
                 },
                 onHomeClick = { currentScreen = "Home" },
@@ -73,11 +72,29 @@ fun WalletApp() {
                 onBackClick = { currentScreen = "Wallet" },
                 onReportClick = {
                     println("Пожаловаться на посылку")
-                    // Здесь можно показать диалог или перейти на экран жалобы
                 },
                 onSuccessfulClick = {
                     println("Посылка успешно доставлена")
-                    // Здесь можно перейти на экран успешной доставки
+                    currentScreen = "DeliverySuccess" // ← Переход на экран успеха
+                },
+                onHomeClick = { currentScreen = "Home" },
+                onWalletClick = { currentScreen = "Wallet" },
+                onTrackClick = { currentScreen = "Track" },
+                onProfileClick = { currentScreen = "Profile" }
+            )
+        }
+        "DeliverySuccess" -> {
+            DeliverySuccessScreen(
+                onBackClick = { currentScreen = "Wallet" },
+                onRateRiderClick = {
+                    println("Оценка курьера: ${/* здесь будет рейтинг */}")
+                },
+                onAddFeedbackClick = {
+                    println("Добавить отзыв")
+                    // Здесь можно открыть диалог или экран с отзывом
+                },
+                onDoneClick = {
+                    currentScreen = "Wallet" // Возврат в кошелек
                 },
                 onHomeClick = { currentScreen = "Home" },
                 onWalletClick = { currentScreen = "Wallet" },
@@ -93,7 +110,7 @@ fun WalletApp() {
                 onTrackClick = { currentScreen = "Track" },
                 onProfileClick = { currentScreen = "Profile" },
                 onTopUpClick = { currentScreen = "PaymentMethod" },
-                onBankClick = { currentScreen = "SendPackage" }, // ← Переход на отправку
+                onBankClick = { currentScreen = "SendPackage" },
                 onTransferClick = { /* Переход на перевод */ },
                 onCardClick = { /* Переход на карту */ },
                 onTransactionClick = { transaction ->
@@ -103,8 +120,8 @@ fun WalletApp() {
         }
     }
 
-    // Показываем нижнюю навигацию только если не на экране оплаты
-    if (currentScreen != "PaymentMethod" && currentScreen != "SendPackage") {
+    // Показываем нижнюю навигацию только если не на специальных экранах
+    if (currentScreen !in listOf("PaymentMethod", "SendPackage", "DeliverySuccess")) {
         BottomNavigationBar(
             selectedItem = currentScreen,
             onItemClick = {
