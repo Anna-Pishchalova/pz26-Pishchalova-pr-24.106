@@ -1,4 +1,4 @@
-// MainActivity.kt (обновленная версия)
+// MainActivity.kt (обновленная версия с TrackScreen)
 package com.example.walletapp
 
 import android.os.Bundle
@@ -50,11 +50,22 @@ fun WalletApp() {
                 onBackClick = { currentScreen = "Wallet" },
                 onProceedClick = { method ->
                     selectedPaymentMethod = method
-                    // Здесь можно перейти на экран успешной оплаты или показать сообщение
                     println("Выбран способ оплаты: $method")
-                    // Возвращаемся в кошелек
                     currentScreen = "Wallet"
                 }
+            )
+        }
+        "Track" -> {
+            TrackScreen(
+                onBackClick = { currentScreen = "Wallet" },
+                onViewPackageInfo = {
+                    // Переход к информации о посылке
+                    println("Просмотр информации о посылке")
+                },
+                onHomeClick = { currentScreen = "Home" },
+                onWalletClick = { currentScreen = "Wallet" },
+                onTrackClick = { currentScreen = "Track" },
+                onProfileClick = { currentScreen = "Profile" }
             )
         }
         else -> {
@@ -64,7 +75,7 @@ fun WalletApp() {
                 onWalletClick = { currentScreen = "Wallet" },
                 onTrackClick = { currentScreen = "Track" },
                 onProfileClick = { currentScreen = "Profile" },
-                onTopUpClick = { currentScreen = "PaymentMethod" }, // ← Переход на выбор оплаты
+                onTopUpClick = { currentScreen = "PaymentMethod" },
                 onBankClick = { /* Переход на банк */ },
                 onTransferClick = { /* Переход на перевод */ },
                 onCardClick = { /* Переход на карту */ },
@@ -79,7 +90,15 @@ fun WalletApp() {
     if (currentScreen != "PaymentMethod") {
         BottomNavigationBar(
             selectedItem = currentScreen,
-            onItemClick = { currentScreen = it }
+            onItemClick = {
+                when (it) {
+                    "Home" -> { /* Заглушка */ }
+                    "Wallet" -> { currentScreen = "Wallet" }
+                    "Track" -> { currentScreen = "Track" }
+                    "Profile" -> { currentScreen = "Profile" }
+                    else -> { currentScreen = it }
+                }
+            }
         )
     }
 }
